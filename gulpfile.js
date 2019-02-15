@@ -1,23 +1,43 @@
 'use strict';
 
-let babel = require('gulp-babel');
-let es = require('event-stream');
-let glob = require('glob');
-let gulp = require('gulp');
+const babel = require('gulp-babel');
+const es = require('event-stream');
+const gulp = require('gulp');
+const concat = require('gulp-concat');
 
-gulp.task('default', ['src', 'test']);
+gulp.task('default', ['test', 'buildES6', 'buildES5']);
 
-gulp.task('src', () =>
+gulp.task('buildES5', () =>
     gulp.src('src/mixwith.js')
         .pipe(babel({
-          'plugins': [ 'transform-es2015-modules-umd' ],
-          'only': [
-            'src/*.js',
-            'test/*.js',
+          "presets": [
+            [
+              "@babel/preset-env",
+              {
+                "targets": {
+                  "ie": "11",
+                }
+              }
+            ]
+          ],
+          "plugins": [
+            "@babel/plugin-transform-modules-umd"
           ]
         }))
+        .pipe(concat('mixwith_es5.js'))
         .pipe(gulp.dest('.'))
         .pipe(gulp.dest('build')));
+
+gulp.task('buildES6', () =>
+        gulp.src('src/mixwith.js')
+            .pipe(babel({
+              "plugins": [
+                "@babel/plugin-transform-modules-umd"
+              ]
+            }))
+            .pipe(concat('mixwith_es6.js'))
+            .pipe(gulp.dest('.'))
+            .pipe(gulp.dest('build')));
 
 gulp.task('test', () =>
     es.merge(
