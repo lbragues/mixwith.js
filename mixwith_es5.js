@@ -10,7 +10,7 @@
     factory(mod.exports);
     global.mixwith = mod.exports;
   }
-})(this, function (_exports) {
+})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports) {
   'use strict'; // used by apply() and isApplicationOf()
 
   Object.defineProperty(_exports, "__esModule", {
@@ -300,15 +300,11 @@
 
   _exports.mix = mix;
 
-  var MixinBuilder =
-  /*#__PURE__*/
-  function () {
+  var MixinBuilder = /*#__PURE__*/function () {
     function MixinBuilder(superclass) {
       _classCallCheck(this, MixinBuilder);
 
-      this.superclass = superclass ||
-      /*#__PURE__*/
-      function () {
+      this.superclass = superclass || /*#__PURE__*/function () {
         function _class() {
           _classCallCheck(this, _class);
         }
@@ -327,11 +323,11 @@
     _createClass(MixinBuilder, [{
       key: "with",
       value: function _with() {
-        for (var _len = arguments.length, mixins = new Array(_len), _key = 0; _key < _len; _key++) {
-          mixins[_key] = arguments[_key];
-        }
+        return Array.from(arguments).reduce(function (c, m) {
+          if (typeof m !== "function") {
+            return c;
+          }
 
-        return mixins.reduce(function (c, m) {
           return m(c);
         }, this.superclass);
       }

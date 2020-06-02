@@ -10,7 +10,7 @@
     factory(mod.exports);
     global.mixwith = mod.exports;
   }
-})(this, function (_exports) {
+})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports) {
   'use strict'; // used by apply() and isApplicationOf()
 
   Object.defineProperty(_exports, "__esModule", {
@@ -288,8 +288,14 @@
      */
 
 
-    with(...mixins) {
-      return mixins.reduce((c, m) => m(c), this.superclass);
+    with() {
+      return Array.from(arguments).reduce((c, m) => {
+        if (typeof m !== "function") {
+          return c;
+        }
+
+        return m(c);
+      }, this.superclass);
     }
 
   }

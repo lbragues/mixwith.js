@@ -243,7 +243,13 @@ class MixinBuilder {
    * @param {Array.<Mixin>} mixins
    * @return {Function} a subclass of `superclass` with `mixins` applied
    */
-  with(...mixins) {
-    return mixins.reduce((c, m) => m(c), this.superclass);
+  with() {
+    return Array.from(arguments).reduce((c, m) => {
+      if(typeof m !== "function"){
+        return c;
+      }
+
+      return m(c);
+    }, this.superclass);
   }
 }
